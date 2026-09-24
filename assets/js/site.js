@@ -218,6 +218,130 @@
     if (first) track.appendChild(first.cloneNode(true));   // seamless 50% loop
   });
 
+  /* ------------------------------------------------- featured case slideshow */
+  Array.prototype.forEach.call(document.querySelectorAll('[data-show]'), function (show) {
+    var slides = show.querySelectorAll('[data-show-slide]');
+    if (slides.length < 2) return;
+
+    var dotsBox = show.querySelector('[data-show-dots]');
+    var count   = show.querySelector('[data-show-count]');
+    var wait    = parseInt(show.getAttribute('data-interval'), 10) || 7000;
+    var at      = 0;
+    var timer   = null;
+    var dots    = [];
+    var held    = false;   // pointer or focus is on the card
+    var seen    = true;    // the card is on screen
+
+    show.style.setProperty('--show-int', wait + 'ms');
+
+    var pad = function (n) { return (n < 10 ? '0' : '') + n; };
+
+    var draw = function () {
+      Array.prototype.forEach.call(slides, function (slide, i) {
+        var on = i === at;
+        slide.classList.toggle('is-on', on);
+        slide.setAttribute('aria-hidden', String(!on));
+        // keep hidden slides out of the tab order without hiding them from AT
+        Array.prototype.forEach.call(slide.querySelectorAll('a,button'), function (el) {
+          if (on) el.removeAttribute('tabindex');
+          else el.setAttribute('tabindex', '-1');
+        });
+      });
+      dots.forEach(function (dot, i) {
+        dot.classList.toggle('is-on', i === at);
+        if (i === at) dot.setAttribute('aria-current', 'true');
+        else dot.removeAttribute('aria-current');
+      });
+      if (count) count.textContent = pad(at + 1) + ' / ' + pad(slides.length);
+    };
+
+    var go = function (i) {
+      at = (i + slides.length) % slides.length;
+      draw();
+      play();
+    };
+
+    var stop = function () {
+      if (timer) { window.clearTimeout(timer); timer = null; }
+      show.classList.remove('is-live');   // also resets the dot's progress fill
+    };
+
+    var play = function () {
+      stop();
+      if (calm || held || document.hidden || !seen) return;
+      void show.offsetWidth;              // let the fill animation start over
+      show.classList.add('is-live');
+      timer = window.setTimeout(function () { go(at + 1); }, wait);
+    };
+
+    var hold = function (on) {
+      held = on;
+      if (on) stop(); else play();
+    };
+
+    /* dots — one per slide, labelled from the slide's own heading */
+    if (dotsBox) {
+      Array.prototype.forEach.call(slides, function (slide, i) {
+        var head = slide.querySelector('h3');
+        var dot = document.createElement('button');
+        dot.type = 'button';
+        dot.className = 'show-dot';
+        dot.setAttribute('aria-label', head ? head.textContent : 'Project ' + (i + 1));
+        dot.addEventListener('click', function () { go(i); });
+        dotsBox.appendChild(dot);
+        dots.push(dot);
+      });
+    }
+
+    var prev = show.querySelector('[data-show-prev]');
+    var next = show.querySelector('[data-show-next]');
+    if (prev) prev.addEventListener('click', function () { go(at - 1); });
+    if (next) next.addEventListener('click', function () { go(at + 1); });
+
+    /* let people read: pause on hover, on focus, and while the tab is away */
+    show.addEventListener('pointerenter', function () { hold(true); });
+    show.addEventListener('pointerleave', function () { hold(false); });
+    show.addEventListener('focusin', function () { hold(true); });
+    show.addEventListener('focusout', function () {
+      if (!show.contains(document.activeElement)) hold(false);
+    });
+    document.addEventListener('visibilitychange', function () {
+      if (document.hidden) stop(); else play();
+    });
+
+    show.addEventListener('keydown', function (e) {
+      if (e.key === 'ArrowLeft') { go(at - 1); e.preventDefault(); }
+      else if (e.key === 'ArrowRight') { go(at + 1); e.preventDefault(); }
+    });
+
+    /* swipe */
+    var startX = null;
+    show.addEventListener('pointerdown', function (e) {
+      if (e.pointerType === 'mouse') return;
+      startX = e.clientX;
+    }, { passive: true });
+    show.addEventListener('pointerup', function (e) {
+      if (startX === null) return;
+      var dx = e.clientX - startX;
+      startX = null;
+      if (Math.abs(dx) > 45) go(dx < 0 ? at + 1 : at - 1);
+    }, { passive: true });
+
+    /* only run while it is actually on screen */
+    if ('IntersectionObserver' in window) {
+      seen = false;
+      new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          seen = entry.isIntersecting;
+          if (seen) play(); else stop();
+        });
+      }, { threshold: 0.2 }).observe(show);
+    }
+
+    draw();
+    play();
+  });
+
   /* ------------------------------------------- FAQ: one panel open at a time */
   var faqs = document.querySelectorAll('.faq details');
   Array.prototype.forEach.call(faqs, function (d) {

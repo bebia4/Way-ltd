@@ -984,6 +984,57 @@ h1,h2,h3,h4,h5{
 .case-bd p{font-size:.94rem;line-height:1.58;color:var(--d-md)}
 .case-bd .tags{margin-top:auto;padding-top:1rem;display:flex;flex-wrap:wrap;gap:.4rem}
 
+/* ----------------------------------------------- featured case slideshow */
+.show{display:flex;flex-direction:column}
+.show-slide{display:flex;flex-direction:column;min-width:0}
+/* with JS every slide shares one grid cell, so the stage is as tall as the
+   tallest one and nothing jumps as they cross-fade; without it they simply
+   stack down the card and all of them stay readable */
+.js .show-stage{display:grid}
+.js .show-slide{grid-area:1/1;opacity:0;visibility:hidden;pointer-events:none;
+  transition:opacity .62s var(--ease),transform .62s var(--ease);transform:scale(1.012)}
+.js .show-slide.is-on{opacity:1;visibility:visible;pointer-events:auto;transform:none}
+.no-js .show-slide + .show-slide{border-top:1px solid var(--d-line-2)}
+.show-slide .case-fig{border-bottom:1px solid var(--d-line-2)}
+/* screenshots sit in full, matted; photographs fill the frame */
+.case-fig img.case-shot{object-fit:contain;background:#0A0A12}
+
+.show-bar{display:flex;align-items:center;gap:.9rem;
+  padding:.7rem clamp(1.3rem,2.4vw,1.9rem);border-top:1px solid var(--d-line-2)}
+.no-js .show-bar{display:none}
+.show-count{font-family:var(--mono);font-size:.68rem;letter-spacing:.14em;color:var(--d-lo)}
+.show-dots{display:flex;align-items:center;gap:.45rem;margin-right:auto}
+.show-dot{width:22px;height:4px;padding:0;border:0;border-radius:99px;cursor:pointer;
+  background:var(--d-line-2);position:relative;overflow:hidden;
+  transition:width .5s var(--ease),background-color .4s ease}
+.show-dot:hover{background:var(--d-lo)}
+.show-dot.is-on{width:52px;background:var(--d-line)}
+.show-dot.is-on::after{content:"";position:absolute;inset:0;transform-origin:left center;
+  background:var(--d-hi);transform:scaleX(0)}
+/* the fill only runs while the show is actually counting down — paused on
+   hover, off screen or with reduced motion, it simply is not there */
+.show.is-live .show-dot.is-on::after{animation:showfill var(--show-int,7000ms) linear forwards}
+@keyframes showfill{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+.show-arws{display:flex;gap:.4rem}
+.show-arw{width:32px;height:32px;display:grid;place-items:center;cursor:pointer;
+  border:1px solid var(--d-line-2);border-radius:50%;background:transparent;
+  color:var(--d-md);font-size:.85rem;line-height:1;
+  transition:border-color .35s ease,color .35s ease,background-color .35s ease}
+.show-arw:hover{border-color:var(--d-line);color:var(--d-hi);background:var(--ink-2)}
+.on-light .show-slide .case-fig,
+.on-light .show-bar{border-color:var(--l-line)}
+.on-light .show-count{color:var(--l-lo)}
+.on-light .show-dot{background:var(--l-line-2)}
+.on-light .show-dot.is-on{background:var(--l-line)}
+.on-light .show-dot.is-on::after{background:var(--l-hi)}
+.on-light .show-arw{border-color:var(--l-line);color:var(--l-md)}
+.on-light .show-arw:hover{border-color:var(--l-lo);color:var(--l-hi);background:var(--bone-2)}
+@media (prefers-reduced-motion: reduce){
+  .js .show-slide{transition:none;transform:none}
+  .show-dot.is-on::after{animation:none !important;transform:scaleX(1)}
+  .show-dot,.show-arw{transition:none}
+}
+
 /* ------------------------------------------------------------------ steps */
 .steps{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--d-line-2);
        border:1px solid var(--d-line-2);border-radius:var(--r);overflow:hidden}
