@@ -212,6 +212,63 @@
     })();
   }
 
+  /* ------------------------------------------ case figure slideshow */
+  /* Crossfades the slides in a [data-slides] figure. It only ever runs while
+     the card is on screen, the tab is visible, and nobody is hovering or
+     tabbing through it — and not at all if the visitor asked for less motion,
+     in which case the dots still work as a manual picker. */
+  Array.prototype.forEach.call(document.querySelectorAll('[data-slides]'), function (box) {
+    var slides = box.querySelectorAll('.slide');
+    if (slides.length < 2) return;
+
+    var dots = box.querySelectorAll('[data-slide-to]');
+    var hold = parseInt(box.getAttribute('data-hold'), 10) || 6000;
+    var at = 0, timer = null, paused = false, onScreen = true;
+
+    var show = function (n) {
+      at = (n + slides.length) % slides.length;
+      Array.prototype.forEach.call(slides, function (slide, i) {
+        slide.classList.toggle('is-on', i === at);
+        slide.setAttribute('aria-hidden', String(i !== at));
+      });
+      Array.prototype.forEach.call(dots, function (dot, i) {
+        dot.setAttribute('aria-current', String(i === at));
+      });
+    };
+
+    var stop = function () {
+      if (timer) { window.clearInterval(timer); timer = null; }
+    };
+
+    var play = function () {
+      stop();
+      if (calm || paused || !onScreen || document.hidden) return;
+      timer = window.setInterval(function () { show(at + 1); }, hold);
+    };
+
+    var hold_ = function (on) { paused = on; play(); };
+
+    Array.prototype.forEach.call(dots, function (dot, i) {
+      dot.addEventListener('click', function () { show(i); play(); });
+    });
+
+    box.addEventListener('pointerenter', function () { hold_(true); });
+    box.addEventListener('pointerleave', function () { hold_(false); });
+    box.addEventListener('focusin', function () { hold_(true); });
+    box.addEventListener('focusout', function () { hold_(false); });
+    document.addEventListener('visibilitychange', play);
+
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(function (entries) {
+        onScreen = entries[0].isIntersecting;
+        play();
+      }, { threshold: 0.25 }).observe(box);
+    }
+
+    show(0);
+    play();
+  });
+
   /* ---------------------------------------------- marquee: duplicate track */
   Array.prototype.forEach.call(document.querySelectorAll('.marq-track'), function (track) {
     var first = track.firstElementChild;
