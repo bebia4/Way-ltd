@@ -554,6 +554,45 @@ h1,h2,h3,h4,h5{
 .hero-lede{margin-top:clamp(1.6rem,3vw,2.3rem);max-width:56ch}
 .hero-cta{margin-top:clamp(2rem,3.6vw,2.9rem)}
 
+/* two columns: copy on the left, the product visual floating on the right */
+.hero-cols{
+  display:grid;
+  grid-template-columns:minmax(0,1.22fr) minmax(0,.78fr);
+  align-items:center;
+  gap:clamp(2rem,5vw,4.5rem);
+}
+.hero-copy{min-width:0}
+/* the visual takes real width, so the headline runs at a slightly tighter scale
+   to keep its three masked lines from wrapping */
+.hero-cols .hero-head{font-size:clamp(2.5rem,4.85vw,4.7rem)}
+.hero-cols .hero-lede{max-width:48ch}
+
+.hero-visual{
+  position:relative;
+  min-width:0;
+  justify-self:end;
+  display:flex;align-items:center;justify-content:center;
+}
+/* a soft glow so the cut-out sits on the aurora instead of floating loose */
+.hero-visual::before{
+  content:'';position:absolute;z-index:0;
+  inset:6% -6% 2%;
+  background:radial-gradient(ellipse 58% 54% at 52% 48%,rgba(111,14,199,.42),transparent 70%);
+  filter:blur(52px);
+  pointer-events:none;
+}
+.hero-visual img{
+  position:relative;z-index:1;
+  display:block;width:100%;height:auto;
+  max-width:clamp(360px,42vw,660px);
+  filter:drop-shadow(0 34px 60px rgba(0,0,0,.45));
+  animation:hero-float 8s var(--ease-io) infinite alternate;
+  will-change:transform;
+}
+@keyframes hero-float{from{transform:translate3d(0,-.9%,0)}to{transform:translate3d(0,2.1%,0)}}
+:root[data-theme="light"] .hero-visual img{filter:drop-shadow(0 30px 54px rgba(20,12,45,.26))}
+:root[data-theme="light"] .hero-visual::before{opacity:.45}
+
 /* status pill */
 .pill{
   display:inline-flex;align-items:center;gap:.6rem;
@@ -1155,6 +1194,12 @@ h1,h2,h3,h4,h5{
   .cases{grid-template-columns:1fr}
   .bigcta{grid-template-columns:1fr}
   .hero-facts{grid-template-columns:repeat(2,1fr);row-gap:1.5rem}
+  .hero-cols{grid-template-columns:1fr;gap:clamp(2.2rem,6vw,3rem)}
+  .hero-visual{justify-self:center}
+  .hero-visual img{max-width:min(560px,86vw)}
+  .hero-head{max-width:none}
+  .hero-cols .hero-head{font-size:clamp(2.5rem,6.9vw,6.1rem)}
+  .hero-cols .hero-lede{max-width:56ch}
   .svc.is-wide{flex-direction:column;align-items:flex-start;gap:1rem}
   .svc.is-wide .gl{margin-bottom:auto}
   .svc.is-wide .tlink{align-self:flex-start}
@@ -1179,6 +1224,8 @@ h1,h2,h3,h4,h5{
   .scroll-cue{display:none}
   .ftr-top{grid-template-columns:1fr;gap:2rem}
   .hero{min-height:auto;padding-block:clamp(8rem,22vh,10rem) 4rem}
+  .hero-visual img{max-width:min(420px,92vw)}
+  .hero-visual::before{inset:10% -10% 6%;filter:blur(40px)}
   .btn{width:100%;justify-content:center}
   .btn-row{flex-direction:column;align-items:stretch}
   .contact-meta{flex-direction:column;gap:.8rem}
@@ -1196,6 +1243,7 @@ h1,h2,h3,h4,h5{
   [data-rv]{opacity:1 !important;transform:none !important}
   .hero-head .ln > span,.rise > span{transform:none !important}
   .marq-track{animation:none;transform:none}
+  .hero-visual img{animation:none;transform:none}
   .halo{display:none}
 }
 @media print{
