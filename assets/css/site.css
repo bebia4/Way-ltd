@@ -14,6 +14,7 @@
   --amber:#F8AB73;
 
   --brand: linear-gradient(100deg,#6F0EC7 0%,#6F3CDA 16%,#3D71F1 36%,#1D8DF9 50%,#F07F72 78%,#F8AB73 100%);
+  --brand-text: var(--brand);
   --brand-soft: linear-gradient(100deg,rgba(111,14,199,.22),rgba(61,113,241,.22),rgba(240,127,114,.22),rgba(248,171,115,.22));
 
   /* surfaces */
@@ -27,15 +28,15 @@
 
   /* type colours, dark surfaces */
   --d-hi:#F6F3EE;
-  --d-md:rgba(246,243,238,.66);
-  --d-lo:rgba(246,243,238,.42);
-  --d-line:rgba(246,243,238,.12);
+  --d-md:rgba(246,243,238,.74);
+  --d-lo:rgba(246,243,238,.55);
+  --d-line:rgba(246,243,238,.20);
   --d-line-2:rgba(246,243,238,.07);
 
   /* type colours, light surfaces */
   --l-hi:#0E0E14;
-  --l-md:rgba(14,14,20,.66);
-  --l-lo:rgba(14,14,20,.44);
+  --l-md:rgba(14,14,20,.74);
+  --l-lo:rgba(14,14,20,.62);
   --l-line:rgba(14,14,20,.13);
   --l-line-2:rgba(14,14,20,.07);
 
@@ -55,6 +56,154 @@
 
   --ease:cubic-bezier(.22,1,.36,1);
   --ease-io:cubic-bezier(.65,0,.35,1);
+
+  /* scrims: the page base at alpha, used to keep type legible over colour */
+  --scrim:rgba(8,8,12,.72);
+  --scrim-a:rgba(8,8,12,.52);
+  --scrim-b:rgba(8,8,12,.62);
+
+  /* the faintest wash of the foreground, for inputs and pills */
+  --tint:rgba(246,243,238,.04);
+  --tint-2:rgba(246,243,238,.055);
+
+  /* select caret, recoloured per theme */
+  --caret:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='none'%3E%3Cpath d='M1 1.5 6 6.5 11 1.5' stroke='%23F6F3EE' stroke-opacity='.5' stroke-width='1.4'/%3E%3C/svg%3E");
+
+  --grain-opacity:.16;
+  --grain-blend:overlay;
+  --aurora-opacity:.72;
+
+  /* one dial for every brand wash, so the theme layer stays tokens-only */
+  --glow:1;
+  --spot:rgba(111,14,199,.20);
+  --halo-tint:rgba(111,14,199,.13);
+  --mark:var(--coral);
+  --tier-hero-bg:var(--ink-2);
+  --pill-bg:var(--tint);
+  --card-shadow:none;
+  --card-shadow-hover:none;
+
+  color-scheme:dark;
+}
+
+/* ==========================================================================
+   LIGHT THEME
+   Only tokens change. Every rule below this block is written against them,
+   so the whole site inverts without a single component being rewritten.
+   ========================================================================= */
+:root[data-theme="light"]{
+  /* base surfaces — warm paper, with cards lifting to white */
+  --ink:#F7F4EF;
+  --ink-1:#FFFFFF;
+  --ink-2:#F2EEE6;   /* hover: recedes on light, where it rose on dark */
+  --ink-3:#EBE5DA;
+
+  /* the contrast band recesses instead of rising */
+  --bone:#EAE3D6;
+  --bone-2:#E1D9C9;
+  --bone-3:#D5CBB8;
+
+  /* type on the base surface */
+  --d-hi:#0D0D13;
+  --d-md:rgba(13,13,19,.78);
+  --d-lo:rgba(13,13,19,.62);
+  --d-line:rgba(13,13,19,.22);
+  --d-line-2:rgba(13,13,19,.09);
+
+  /* type on .on-light bands — still dark, but the band is deeper now */
+  --l-hi:#0D0D13;
+  --l-md:rgba(13,13,19,.78);
+  --l-lo:rgba(13,13,19,.62);
+  --l-line:rgba(13,13,19,.16);
+  --l-line-2:rgba(13,13,19,.08);
+
+  --scrim:rgba(247,244,239,.82);
+  --scrim-a:rgba(247,244,239,.40);
+  --scrim-b:rgba(247,244,239,.64);
+
+  --tint:rgba(13,13,19,.035);
+  --tint-2:rgba(13,13,19,.055);
+
+  --caret:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='none'%3E%3Cpath d='M1 1.5 6 6.5 11 1.5' stroke='%230D0D13' stroke-opacity='.5' stroke-width='1.4'/%3E%3C/svg%3E");
+
+  /* grain reads as paper texture on light, not a glow */
+  --brand-text: linear-gradient(100deg,#6F0EC7 0%,#6F3CDA 16%,#3D71F1 36%,#1470CF 50%,#D14A3A 78%,#C4702A 100%);
+
+  --grain-opacity:.20;
+  --grain-blend:multiply;
+  --aurora-opacity:.58;
+
+  /* washes sized for a black canvas read as stains on paper — halve them */
+  --glow:.46;
+  --spot:rgba(111,14,199,.09);
+  --halo-tint:rgba(111,14,199,.07);
+  --mark:#C4442F;
+  --tier-hero-bg:#FFFFFF;
+  --pill-bg:rgba(255,255,255,.55);
+  --card-shadow:0 1px 2px rgba(13,13,19,.04),0 8px 24px -12px rgba(13,13,19,.10);
+  --card-shadow-hover:0 2px 4px rgba(13,13,19,.05),0 18px 40px -16px rgba(13,13,19,.16);
+
+  color-scheme:light;
+}
+
+/* Mirror of the block above for visitors with JavaScript disabled: the head
+   script never runs, so no data-theme attribute is ever set and .no-js stays
+   on <html>. Generated from the same token body — keep the two identical. */
+@media (prefers-color-scheme: light){
+:root.no-js{
+  /* base surfaces — warm paper, with cards lifting to white */
+  --ink:#F7F4EF;
+  --ink-1:#FFFFFF;
+  --ink-2:#F2EEE6;   /* hover: recedes on light, where it rose on dark */
+  --ink-3:#EBE5DA;
+
+  /* the contrast band recesses instead of rising */
+  --bone:#EAE3D6;
+  --bone-2:#E1D9C9;
+  --bone-3:#D5CBB8;
+
+  /* type on the base surface */
+  --d-hi:#0D0D13;
+  --d-md:rgba(13,13,19,.78);
+  --d-lo:rgba(13,13,19,.62);
+  --d-line:rgba(13,13,19,.22);
+  --d-line-2:rgba(13,13,19,.09);
+
+  /* type on .on-light bands — still dark, but the band is deeper now */
+  --l-hi:#0D0D13;
+  --l-md:rgba(13,13,19,.78);
+  --l-lo:rgba(13,13,19,.62);
+  --l-line:rgba(13,13,19,.16);
+  --l-line-2:rgba(13,13,19,.08);
+
+  --scrim:rgba(247,244,239,.82);
+  --scrim-a:rgba(247,244,239,.40);
+  --scrim-b:rgba(247,244,239,.64);
+
+  --tint:rgba(13,13,19,.035);
+  --tint-2:rgba(13,13,19,.055);
+
+  --caret:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='none'%3E%3Cpath d='M1 1.5 6 6.5 11 1.5' stroke='%230D0D13' stroke-opacity='.5' stroke-width='1.4'/%3E%3C/svg%3E");
+
+  /* grain reads as paper texture on light, not a glow */
+  --brand-text: linear-gradient(100deg,#6F0EC7 0%,#6F3CDA 16%,#3D71F1 36%,#1470CF 50%,#D14A3A 78%,#C4702A 100%);
+
+  --grain-opacity:.20;
+  --grain-blend:multiply;
+  --aurora-opacity:.58;
+
+  /* washes sized for a black canvas read as stains on paper — halve them */
+  --glow:.46;
+  --spot:rgba(111,14,199,.09);
+  --halo-tint:rgba(111,14,199,.07);
+  --mark:#C4442F;
+  --tier-hero-bg:#FFFFFF;
+  --pill-bg:rgba(255,255,255,.55);
+  --card-shadow:0 1px 2px rgba(13,13,19,.04),0 8px 24px -12px rgba(13,13,19,.10);
+  --card-shadow-hover:0 2px 4px rgba(13,13,19,.05),0 18px 40px -16px rgba(13,13,19,.16);
+
+  color-scheme:light;
+}
 }
 
 /* ------------------------------------------------------------------ reset */
@@ -115,7 +264,7 @@ h1,h2,h3,h4,h5{
   padding-right:.06em;
 }
 .grad{
-  background:var(--brand);
+  background:var(--brand-text);
   background-size:100% 100%;
   -webkit-background-clip:text;
   background-clip:text;
@@ -158,7 +307,7 @@ h1,h2,h3,h4,h5{
 .on-light .eyebrow{color:var(--l-lo)}
 .eyebrow .mk{
   font-size:.9em;
-  background:var(--brand);
+  background:var(--brand-text);
   -webkit-background-clip:text;background-clip:text;
   color:transparent;-webkit-text-fill-color:transparent;
 }
@@ -242,7 +391,7 @@ h1,h2,h3,h4,h5{
 /* ----------------------------------------------------------------- grain */
 .grain{
   position:fixed;inset:0;z-index:9;pointer-events:none;
-  opacity:.16;mix-blend-mode:overlay;
+  opacity:var(--grain-opacity);mix-blend-mode:var(--grain-blend);
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.82' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
@@ -261,16 +410,13 @@ h1,h2,h3,h4,h5{
   transition:height .45s var(--ease);
 }
 .hdr.is-stuck{
-  background:rgba(8,8,12,.72);
+  background:var(--scrim);
   backdrop-filter:blur(18px) saturate(150%);
   -webkit-backdrop-filter:blur(18px) saturate(150%);
   border-bottom-color:var(--d-line-2);
 }
 .hdr.is-stuck .hdr-in{--h:68px}
 .hdr.is-hidden{transform:translateY(-104%)}
-
-/* light-page variant */
-.hdr.on-bone.is-stuck{background:rgba(246,243,238,.78);border-bottom-color:var(--l-line-2)}
 
 .brand{display:flex;align-items:center;flex:0 0 auto}
 .brand img{
@@ -297,10 +443,6 @@ h1,h2,h3,h4,h5{
 .nav a:hover,.nav a[aria-current="page"]{color:var(--d-hi)}
 .nav a:hover::after,.nav a[aria-current="page"]::after{transform:scaleX(1);transform-origin:left}
 .hdr-cta{display:flex;align-items:center;gap:.8rem}
-
-.hdr.on-bone .nav a{color:var(--l-md)}
-.hdr.on-bone .nav a:hover,.hdr.on-bone .nav a[aria-current="page"]{color:var(--l-hi)}
-.hdr.on-bone .burger span{background:var(--l-hi)}
 
 /* burger */
 .burger{
@@ -358,7 +500,7 @@ h1,h2,h3,h4,h5{
 }
 
 /* aurora field — three blurred brand-coloured masses, slowly drifting */
-.aurora{position:absolute;inset:-25%;z-index:-2;filter:blur(86px);opacity:.72}
+.aurora{position:absolute;inset:-25%;z-index:-2;filter:blur(86px);opacity:var(--aurora-opacity)}
 .aurora i{
   position:absolute;display:block;border-radius:50%;
   will-change:transform;
@@ -401,8 +543,8 @@ h1,h2,h3,h4,h5{
 .hero::after{
   content:'';position:absolute;inset:0;z-index:-1;pointer-events:none;
   background:
-    radial-gradient(ellipse 62% 50% at 20% 46%,rgba(8,8,12,.52),transparent 72%),
-    linear-gradient(180deg,rgba(8,8,12,.62) 0%,transparent 30%,transparent 58%,var(--ink) 99%);
+    radial-gradient(ellipse 62% 50% at 20% 46%,var(--scrim-a),transparent 72%),
+    linear-gradient(180deg,var(--scrim-b) 0%,transparent 30%,transparent 58%,var(--ink) 99%);
 }
 
 .hero-in{position:relative;z-index:2;width:100%}
@@ -417,7 +559,7 @@ h1,h2,h3,h4,h5{
   display:inline-flex;align-items:center;gap:.6rem;
   padding:.44rem .95rem .44rem .7rem;
   border:1px solid var(--d-line);border-radius:100px;
-  background:rgba(246,243,238,.04);
+  background:var(--pill-bg);
   backdrop-filter:blur(8px);
   font-family:var(--mono);font-size:.7rem;font-weight:400;
   letter-spacing:.14em;text-transform:uppercase;color:var(--d-md);
@@ -497,7 +639,7 @@ h1,h2,h3,h4,h5{
   transition:color .4s ease;
 }
 .marq-track > .marq-group > span::after{
-  content:'◈';font-size:.58em;color:var(--coral);opacity:.75;
+  content:'◈';font-size:.58em;color:var(--mark);opacity:.8;
 }
 .marq:hover .marq-track span{color:var(--d-md)}
 @keyframes slide{to{transform:translateX(-50%)}}
@@ -561,7 +703,7 @@ h1,h2,h3,h4,h5{
   text-align:center;
 }
 .solution::before{
-  content:'';position:absolute;inset:0;z-index:-1;
+  content:'';position:absolute;inset:0;z-index:-1;opacity:var(--glow);
   background:
     radial-gradient(ellipse 60% 70% at 50% 0%,rgba(111,14,199,.30),transparent 62%),
     radial-gradient(ellipse 55% 60% at 82% 100%,rgba(240,127,114,.22),transparent 62%),
@@ -600,7 +742,7 @@ h1,h2,h3,h4,h5{
 }
 .svc::before{
   content:'';position:absolute;inset:0;z-index:-1;opacity:0;
-  background:radial-gradient(circle 420px at var(--mx,50%) var(--my,50%),rgba(111,14,199,.20),transparent 62%);
+  background:radial-gradient(circle 420px at var(--mx,50%) var(--my,50%),var(--spot),transparent 62%);
   transition:opacity .5s var(--ease);
 }
 .svc:hover{background:var(--ink-2)}
@@ -616,7 +758,7 @@ h1,h2,h3,h4,h5{
 }
 .svc:hover .gl{
   transform:rotate(90deg) scale(1.06);
-  background:var(--brand);
+  background:var(--brand-text);
   -webkit-background-clip:text;background-clip:text;
   color:transparent;-webkit-text-fill-color:transparent;
 }
@@ -644,7 +786,7 @@ h1,h2,h3,h4,h5{
   gap:clamp(1.6rem,4vw,3.5rem);align-items:center;
 }
 .bigcta::before{
-  content:'';position:absolute;inset:0;z-index:-1;
+  content:'';position:absolute;inset:0;z-index:-1;opacity:var(--glow);
   background:radial-gradient(ellipse 70% 130% at 8% 50%,rgba(111,14,199,.26),transparent 62%),
              radial-gradient(ellipse 60% 120% at 92% 50%,rgba(248,171,115,.18),transparent 62%);
 }
@@ -658,7 +800,7 @@ h1,h2,h3,h4,h5{
    ========================================================================= */
 .contact{position:relative;overflow:hidden;isolation:isolate;text-align:center}
 .contact::before{
-  content:'';position:absolute;inset:0;z-index:-1;
+  content:'';position:absolute;inset:0;z-index:-1;opacity:var(--glow);
   background:radial-gradient(ellipse 80% 90% at 50% 112%,rgba(111,14,199,.34),transparent 64%),
              radial-gradient(ellipse 60% 70% at 18% 8%,rgba(29,141,249,.16),transparent 62%),
              radial-gradient(ellipse 60% 70% at 84% 12%,rgba(240,127,114,.16),transparent 62%);
@@ -716,7 +858,7 @@ h1,h2,h3,h4,h5{
   padding-bottom:clamp(3.5rem,7vw,6rem);
 }
 .phero::before{
-  content:'';position:absolute;inset:0;z-index:-1;
+  content:'';position:absolute;inset:0;z-index:-1;opacity:var(--glow);
   background:
     radial-gradient(ellipse 70% 80% at 12% -10%,rgba(111,14,199,.30),transparent 62%),
     radial-gradient(ellipse 60% 70% at 88% -4%,rgba(240,127,114,.20),transparent 62%),
@@ -784,9 +926,10 @@ h1,h2,h3,h4,h5{
   position:relative;display:flex;flex-direction:column;
   border:1px solid var(--d-line-2);border-radius:var(--r);
   background:var(--ink-1);overflow:hidden;
-  transition:transform .6s var(--ease),border-color .5s ease;
+  transition:transform .6s var(--ease),border-color .5s ease,box-shadow .5s ease;
+  box-shadow:var(--card-shadow);
 }
-.case:hover{transform:translateY(-5px);border-color:var(--d-line)}
+.case:hover{transform:translateY(-5px);border-color:var(--d-line);box-shadow:var(--card-shadow-hover)}
 .case.is-feature{grid-column:1 / -1}
 .case-fig{
   position:relative;aspect-ratio:16/9;overflow:hidden;
@@ -823,10 +966,11 @@ h1,h2,h3,h4,h5{
   padding:clamp(1.7rem,2.8vw,2.4rem);
   border:1px solid var(--d-line-2);border-radius:var(--r);
   background:var(--ink-1);
-  transition:transform .55s var(--ease),border-color .45s ease,background-color .5s ease;
+  transition:transform .55s var(--ease),border-color .45s ease,background-color .5s ease,box-shadow .5s ease;
+  box-shadow:var(--card-shadow);
 }
-.tier:hover{transform:translateY(-4px);border-color:var(--d-line)}
-.tier.is-hero{background:var(--ink-2);border-color:transparent;isolation:isolate}
+.tier:hover{transform:translateY(-4px);border-color:var(--d-line);box-shadow:var(--card-shadow-hover)}
+.tier.is-hero{background:var(--tier-hero-bg);border-color:transparent;isolation:isolate}
 .tier.is-hero::before{
   content:'';position:absolute;inset:0;z-index:-1;padding:1px;border-radius:inherit;
   background:var(--brand);
@@ -895,14 +1039,14 @@ h1,h2,h3,h4,h5{
   padding:.9rem 1.05rem;
   border:1px solid var(--d-line);
   border-radius:var(--r-sm);
-  background:rgba(246,243,238,.03);
+  background:var(--tint);
   color:var(--d-hi);
   font-size:.97rem;font-weight:400;
   transition:border-color .35s ease,background-color .35s ease;
   appearance:none;
 }
 .fld select{
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='none'%3E%3Cpath d='M1 1.5 6 6.5 11 1.5' stroke='%23F6F3EE' stroke-opacity='.5' stroke-width='1.4'/%3E%3C/svg%3E");
+  background-image:var(--caret);
   background-repeat:no-repeat;background-position:right 1.05rem center;
   padding-right:2.6rem;cursor:pointer;
 }
@@ -910,7 +1054,7 @@ h1,h2,h3,h4,h5{
 .fld textarea{resize:vertical;min-height:130px;line-height:1.6}
 .fld input::placeholder,.fld textarea::placeholder{color:var(--d-lo)}
 .fld input:focus,.fld textarea:focus,.fld select:focus{
-  border-color:var(--azure);background:rgba(246,243,238,.055);outline:none;
+  border-color:var(--azure);background:var(--tint-2);outline:none;
 }
 .fld-2{display:grid;grid-template-columns:1fr 1fr;gap:1.05rem}
 .form .btn{margin-top:.5rem;align-self:flex-start}
@@ -920,13 +1064,14 @@ h1,h2,h3,h4,h5{
   border:1px solid var(--d-line-2);border-radius:var(--r);
   background:var(--ink-1);padding:clamp(1.5rem,2.6vw,2.1rem);
   display:flex;flex-direction:column;gap:1.1rem;
+  box-shadow:var(--card-shadow);
 }
 .aside-card + .aside-card{margin-top:1rem}
 .aside-card h3{font-size:1.1rem;letter-spacing:-.025em}
 .aside-card p{font-size:.93rem;line-height:1.58;color:var(--d-md)}
 .aside-list{display:flex;flex-direction:column;gap:.85rem}
 .aside-list li{display:flex;gap:.75rem;font-size:.93rem;line-height:1.5;color:var(--d-md)}
-.aside-list li .gl{color:var(--coral);flex:0 0 auto;font-size:.85rem;line-height:1.7}
+.aside-list li .gl{color:var(--mark);flex:0 0 auto;font-size:.85rem;line-height:1.7}
 
 /* ----------------------------------------------------------- about / team */
 .split{display:grid;grid-template-columns:repeat(2,1fr);gap:clamp(1.8rem,5vw,4.5rem);align-items:center}
@@ -944,7 +1089,7 @@ h1,h2,h3,h4,h5{
 .val:hover{background:var(--ink-2)}
 .val .gl{font-size:1.5rem;color:var(--d-lo);margin-bottom:clamp(1.2rem,2.5vw,2rem);
          transition:transform .6s var(--ease),color .4s ease}
-.val:hover .gl{transform:rotate(90deg);color:var(--coral)}
+.val:hover .gl{transform:rotate(90deg);color:var(--mark)}
 .val h3{font-size:1.14rem;letter-spacing:-.025em}
 .val p{font-size:.92rem;line-height:1.56;color:var(--d-md)}
 
@@ -979,7 +1124,7 @@ h1,h2,h3,h4,h5{
 .halo{
   position:fixed;top:0;left:0;width:340px;height:340px;border-radius:50%;
   z-index:1;pointer-events:none;opacity:0;
-  background:radial-gradient(circle,rgba(111,14,199,.13),transparent 66%);
+  background:radial-gradient(circle,var(--halo-tint),transparent 66%);
   transform:translate3d(-50%,-50%,0);
   transition:opacity .6s ease;
   will-change:transform;
@@ -999,7 +1144,7 @@ h1,h2,h3,h4,h5{
   .srow > *:not(.gl){grid-column:2;min-width:0}
 }
 @media (max-width:900px){
-  .nav,.hdr-cta{display:none}
+  .nav{display:none}
   .burger{display:block}
   .shead{grid-template-columns:1fr;align-items:start;gap:1.4rem}
   .probs{grid-template-columns:1fr}
@@ -1016,15 +1161,15 @@ h1,h2,h3,h4,h5{
 }
 @media (max-width:760px){
   /* vw-sized blobs collapse on phones — scale them back up so the hero keeps its colour */
-  .aurora{inset:-40%;filter:blur(64px);opacity:.82}
+  .aurora{inset:-40%;filter:blur(64px);opacity:calc(var(--aurora-opacity) + .1)}
   .aurora i:nth-child(1){width:105vw;height:105vw;left:-30%;top:-2%}
   .aurora i:nth-child(2){width:95vw;height:95vw;left:14%;top:22%}
   .aurora i:nth-child(3){width:90vw;height:90vw;right:-28%;top:4%}
   .aurora i:nth-child(4){width:70vw;height:70vw;right:-6%;bottom:-4%}
   .hero::after{
     background:
-      radial-gradient(ellipse 80% 45% at 30% 42%,rgba(8,8,12,.44),transparent 74%),
-      linear-gradient(180deg,rgba(8,8,12,.7) 0%,transparent 26%,transparent 62%,var(--ink) 99%);
+      radial-gradient(ellipse 80% 45% at 30% 42%,var(--scrim-a),transparent 74%),
+      linear-gradient(180deg,var(--scrim-b) 0%,transparent 26%,transparent 62%,var(--ink) 99%);
   }
 }
 @media (max-width:620px){
@@ -1063,3 +1208,36 @@ h1,h2,h3,h4,h5{
 /* a band that sits directly under a page hero needs no top padding of its own */
 .band-flush{padding-top:0;padding-bottom:clamp(3.5rem,7vw,6rem)}
 .srows{border-top:1px solid var(--d-line-2)}
+
+/* light surfaces need a hairline under the stuck header, not a glow */
+:root[data-theme="light"] .hdr.is-stuck{box-shadow:0 1px 0 var(--d-line-2)}
+
+/* ==========================================================================
+   THEME TOGGLE
+   ========================================================================= */
+.theme-btn{
+  position:relative;flex:0 0 auto;
+  width:40px;height:40px;
+  display:inline-grid;place-items:center;
+  border:1px solid var(--d-line);
+  border-radius:50%;
+  color:var(--d-hi);
+  transition:border-color .35s var(--ease),background-color .35s var(--ease),transform .5s var(--ease);
+}
+.theme-btn:hover{border-color:var(--d-md);background:var(--tint)}
+.theme-btn:active{transform:scale(.94)}
+.theme-btn svg{
+  grid-area:1/1;width:17px;height:17px;
+  transition:opacity .4s var(--ease),transform .55s var(--ease);
+}
+/* dark theme showing: offer the sun. light theme: offer the moon. */
+.theme-btn .i-sun{opacity:1;transform:rotate(0) scale(1)}
+.theme-btn .i-moon{opacity:0;transform:rotate(-70deg) scale(.5)}
+:root[data-theme="light"] .theme-btn .i-sun{opacity:0;transform:rotate(70deg) scale(.5)}
+:root[data-theme="light"] .theme-btn .i-moon{opacity:1;transform:rotate(0) scale(1)}
+
+.hdr-actions{display:flex;align-items:center;gap:.7rem;flex:0 0 auto}
+
+@media (max-width:900px){
+  .hdr-book{display:none}
+}

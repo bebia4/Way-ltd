@@ -12,6 +12,54 @@
   var calm = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var fine = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
 
+  /* ---------------------------------------------------------------- theme */
+  /* The inline head script already set data-theme before first paint, so this
+     only has to handle switching, labelling, and remembering the choice. */
+  (function () {
+    var THEMES = { dark: '#08080C', light: '#F7F4EF' };
+    var meta = document.querySelector('meta[name="theme-color"]');
+    var toggles = document.querySelectorAll('[data-theme-toggle]');
+    var stored = null;
+    try { stored = localStorage.getItem('way-theme'); } catch (e) {}
+
+    var current = function () {
+      return root.getAttribute('data-theme') === 'light' ? 'light' : 'dark';
+    };
+
+    var paint = function (theme) {
+      root.setAttribute('data-theme', theme);
+      if (meta) meta.setAttribute('content', THEMES[theme]);
+      var next = theme === 'dark' ? 'light' : 'dark';
+      Array.prototype.forEach.call(toggles, function (btn) {
+        btn.setAttribute('aria-label', 'Switch to ' + next + ' theme');
+        btn.setAttribute('title', 'Switch to ' + next + ' theme');
+      });
+    };
+
+    paint(current());
+
+    Array.prototype.forEach.call(toggles, function (btn) {
+      btn.addEventListener('click', function () {
+        var next = current() === 'dark' ? 'light' : 'dark';
+        paint(next);
+        try { localStorage.setItem('way-theme', next); } catch (e) {}
+      });
+    });
+
+    // With no explicit choice stored, keep following the OS as it changes.
+    if (stored !== 'light' && stored !== 'dark' && window.matchMedia) {
+      var mq = window.matchMedia('(prefers-color-scheme: light)');
+      var follow = function (e) {
+        var pinned = null;
+        try { pinned = localStorage.getItem('way-theme'); } catch (err) {}
+        if (pinned === 'light' || pinned === 'dark') return;
+        paint(e.matches ? 'light' : 'dark');
+      };
+      if (mq.addEventListener) mq.addEventListener('change', follow);
+      else if (mq.addListener) mq.addListener(follow);
+    }
+  })();
+
   /* ------------------------------------------------------------ year stamp */
   Array.prototype.forEach.call(document.querySelectorAll('[data-year]'), function (el) {
     el.textContent = new Date().getFullYear();

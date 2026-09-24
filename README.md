@@ -76,9 +76,61 @@ and hover rules.
 
 Sizes are fluid `clamp()` values, so there are no typographic breakpoints to maintain.
 
-**Surfaces** — `.on-light` flips a section to the warm bone palette; dark is the
-default. `.band` sets the vertical rhythm, `.band-tight` and `.band-flush` are the
-tighter variants.
+**Surfaces** — `.on-light` flips a section to the contrast band; `.band` sets the
+vertical rhythm, with `.band-tight` and `.band-flush` as the tighter variants.
+
+---
+
+## Dark and light themes
+
+Both themes ship. The switcher is the circular button in the header, present on
+every page and on phones too — the fixed header sits above the open mobile menu,
+so it stays reachable.
+
+**How a visitor lands on a theme**
+
+1. A theme they picked before, remembered in `localStorage` under `way-theme`.
+2. Otherwise their operating system's `prefers-color-scheme`.
+3. With no stored choice, the site keeps following the OS if it changes mid-visit.
+
+An inline script in each page's `<head>` sets `data-theme` on `<html>` *before*
+the stylesheets are parsed, so there is no flash of the wrong theme. With
+JavaScript disabled nothing sets the attribute, so a `@media (prefers-color-scheme: light)`
+block keyed to `:root.no-js` takes over — a light-preference visitor with JS off
+still gets the light site.
+
+**How the theme is built**
+
+Light mode is a token swap, not a second stylesheet. `:root[data-theme="light"]`
+redefines the same custom properties the whole site already reads, so no component
+rule is duplicated. Only three selectors in the file are theme-specific, and two of
+those are the toggle's own icon states.
+
+The tokens that carry the inversion:
+
+| Token | Does |
+|---|---|
+| `--ink` … `--ink-3` | base surfaces; cards lift to white on light, rise from black on dark |
+| `--bone` … `--bone-3` | the `.on-light` contrast band — raised on dark, recessed on light |
+| `--d-hi/-md/-lo/-line` | type and rules on the base surface |
+| `--l-hi/-md/-lo/-line` | type and rules on the contrast band |
+| `--glow` | one dial for every brand wash; halved on light, where they would otherwise read as stains |
+| `--brand-text` | gradient headlines only — see below |
+| `--card-shadow` | cards need a shadow to lift off paper; on black, borders do that job |
+| `--scrim`, `--tint`, `--caret`, `--grain-*`, `--aurora-opacity`, `--mark`, `--tier-hero-bg` | the remaining per-theme details |
+
+**Why `--brand-text` exists.** The brand gradient ends in coral and amber. Those
+sit at roughly 1.7:1 against paper — unreadable as headline text. So gradient
+*text* uses a deepened ramp on light (`#1470CF`, `#D14A3A`, `#C4702A` for the warm
+end) while gradient *fills* — buttons, rules, borders — keep the true brand ramp,
+because their text is white on saturated colour.
+
+**To force one theme**, delete the inline `<head>` script's `matchMedia` branch so
+it always falls through to `"dark"` (or `"light"`), and the toggle will still work
+for anyone who wants the other.
+
+> The block under `@media (prefers-color-scheme: light)` is a generated mirror of
+> the `:root[data-theme="light"]` token body. If you edit one, edit both.
 
 ---
 
@@ -110,15 +162,17 @@ These are placeholders in the current build. Each one needs a real value.
    ```
 2. **Domain.** `https://wayinternational.services/` is used in every `<link rel="canonical">`,
    the Open Graph tags, `robots.txt` and `sitemap.xml`.
-3. **Pricing figures.** `pricing.html` carries indicative numbers (`from $12k`,
+3. **Theme default.** The site follows the visitor's OS preference on a first
+   visit. If the brand should always open dark, see "To force one theme" above.
+4. **Pricing figures.** `pricing.html` carries indicative numbers (`from $12k`,
    `from $35k`) shaped to the tier model, not quoted rates. Confirm or replace all of
    them — and the budget bands in the contact form's `Budget range` select.
-4. **Work page.** `work.html` describes six *build patterns*, deliberately written
+5. **Work page.** `work.html` describes six *build patterns*, deliberately written
    without client names or claimed results. Swap each card for a real, referenceable
    case study as they become available.
-5. **Company details.** Registered company number and address usually belong in the
+6. **Company details.** Registered company number and address usually belong in the
    footer and the legal pages — add them once confirmed.
-6. **Legal pages.** `privacy.html` and `terms.html` are a sound starting draft, not
+7. **Legal pages.** `privacy.html` and `terms.html` are a sound starting draft, not
    legal advice. Have them reviewed before launch.
 
 ---
@@ -167,13 +221,16 @@ with `object-fit: cover`, so any aspect ratio will sit correctly.
 - `prefers-reduced-motion: reduce` disables the aurora drift, marquee, reveals and
   cursor halo — it is honoured, not merely declared.
 - Decorative artwork is `alt=""` and `aria-hidden`; the logo carries a real `alt`.
+- Text contrast meets WCAG 2.2 AA in **both** themes — every text node on all nine
+  pages was measured against its own resolved background, including low-emphasis
+  metadata, which is the tier that usually fails.
 - Fonts are self-hosted, so no visitor data reaches a third-party font provider and
   there is no extra DNS round trip.
 - JavaScript is entirely progressive. With it disabled every page still renders, all
   content is visible, and every link works.
 
-Verified with no console errors, no failed requests and no horizontal overflow at
-375 px, 768 px and 1440 px.
+Verified in both themes: no console errors, no failed requests, no horizontal
+overflow at 375 px, 768 px and 1440 px, and no text below its AA contrast floor.
 
 ---
 

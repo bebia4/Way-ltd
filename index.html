@@ -20,7 +20,7 @@
 
 <link rel="preload" href="/assets/fonts/bricolage-grotesque-normal-latin.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/assets/fonts/inter-tight-normal-latin.woff2" as="font" type="font/woff2" crossorigin>
-<script>document.documentElement.classList.remove("no-js");document.documentElement.classList.add("js");</script>
+<script>(function(){var d=document.documentElement;d.classList.remove("no-js");d.classList.add("js");var t=null;try{t=localStorage.getItem("way-theme")}catch(e){}if(t!=="light"&&t!=="dark"){t=(window.matchMedia&&window.matchMedia("(prefers-color-scheme: light)").matches)?"light":"dark"}d.setAttribute("data-theme",t);})();</script>
 <link rel="stylesheet" href="/assets/css/fonts.css">
 <link rel="stylesheet" href="/assets/css/site.css">
 
@@ -68,15 +68,20 @@
       <a href="/about.html"    data-nav="about">About</a>
     </nav>
 
-    <div class="hdr-cta">
-      <a href="/contact.html" class="btn btn-primary btn-sm" data-magnet>
-        <span class="lbl">Book a call</span><span class="arw" aria-hidden="true">→</span>
-      </a>
-    </div>
+    <div class="hdr-actions">
+      <button class="theme-btn" type="button" data-theme-toggle aria-label="Switch to light theme">
+        <svg class="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4.2"/><path d="M12 2v2.4M12 19.6V22M4.2 4.2l1.7 1.7M18.1 18.1l1.7 1.7M2 12h2.4M19.6 12H22M4.2 19.8l1.7-1.7M18.1 5.9l1.7-1.7"/></svg>
+        <svg class="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.5 14.3A8.6 8.6 0 0 1 9.7 3.5a8.6 8.6 0 1 0 10.8 10.8Z"/></svg>
+      </button>
 
-    <button class="burger" aria-label="Open menu" aria-expanded="false" aria-controls="menu">
-      <span></span><span></span>
-    </button>
+      <a href="/contact.html" class="btn btn-primary btn-sm hdr-book" data-magnet>
+        <span class="lbl">Book a call</span><span class="arw" aria-hidden="true">&rarr;</span>
+      </a>
+
+      <button class="burger" aria-label="Open menu" aria-expanded="false" aria-controls="menu">
+        <span></span><span></span>
+      </button>
+    </div>
   </div>
 </header>
 
