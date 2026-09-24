@@ -301,6 +301,36 @@
     show(0);
   });
 
+  /* ------------------------------------------- a lone film in a case figure */
+  /* Loops quietly while it is on screen and the tab is in front, and does
+     nothing at all if the visitor asked for less motion — they get the
+     poster frame and native controls instead. */
+  Array.prototype.forEach.call(document.querySelectorAll('[data-film]'), function (film) {
+    if (calm) { film.setAttribute('controls', ''); return; }
+    film.muted = true;
+
+    var onScreen = true;
+    var run = function () {
+      if (onScreen && !document.hidden) {
+        var playing = film.play();
+        if (playing && playing.catch) playing.catch(function () {});
+      } else {
+        film.pause();
+      }
+    };
+
+    document.addEventListener('visibilitychange', run);
+
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(function (entries) {
+        onScreen = entries[0].intersectionRatio >= 0.25;
+        run();
+      }, { threshold: [0, 0.25, 0.6] }).observe(film);
+    }
+
+    run();
+  });
+
   /* ---------------------------------------------- marquee: duplicate track */
   Array.prototype.forEach.call(document.querySelectorAll('.marq-track'), function (track) {
     var first = track.firstElementChild;
