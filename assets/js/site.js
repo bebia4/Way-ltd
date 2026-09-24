@@ -212,6 +212,26 @@
     })();
   }
 
+  /* Muted autoplay is allowed by every current browser, but one can still
+     refuse it — battery saver, a per-site setting, an old engine. When that
+     happens, try again the moment the visitor touches the page. */
+  var afterGesture = (function () {
+    var queue = [];
+    var fire = function () {
+      document.removeEventListener('pointerdown', fire, true);
+      document.removeEventListener('keydown', fire, true);
+      var due = queue; queue = [];
+      due.forEach(function (fn) { fn(); });
+    };
+    return function (fn) {
+      if (!queue.length) {
+        document.addEventListener('pointerdown', fire, true);
+        document.addEventListener('keydown', fire, true);
+      }
+      queue.push(fn);
+    };
+  })();
+
   /* ------------------------------------------ case figure slideshow */
   /* Crossfades the slides in a [data-slides] figure. Picture slides are held
      for data-hold; film slides run to their own end and then hand over. It
@@ -228,7 +248,9 @@
     var at = 0, timer = null, paused = false, onScreen = true;
 
     var filmIn = function (i) { return slides[i].querySelector('video'); };
-    var idle = function () { return calm || paused || !onScreen || document.hidden; };
+    // What stops playback outright, as against merely holding a still slide:
+    // a pointer resting on the card must not freeze a film that is running.
+    var blocked = function () { return calm || !onScreen || document.hidden; };
     var clear = function () { if (timer) { window.clearTimeout(timer); timer = null; } };
 
     var next = function () { show(at + 1); };
@@ -237,13 +259,16 @@
     var run = function () {
       clear();
       var film = filmIn(at);
-      if (idle()) { if (film) film.pause(); return; }
-      if (!film) { after(hold); return; }
+      if (blocked()) { if (film) film.pause(); return; }
+      if (!film) { if (!paused) after(hold); return; }   // a hover holds a still
 
       film.muted = true;                       // autoplay is only allowed muted
       var playing = film.play();
       if (playing && playing.catch) {
-        playing.catch(function () { after(hold); });   // refused: fall back to the clock
+        playing.catch(function () {            // refused: fall back to the clock
+          after(hold);
+          afterGesture(run);
+        });
       }
       // backstop, so a clip that never fires 'ended' cannot strand the carousel
       after(Math.max(hold, ((film.duration || 10) - (film.currentTime || 0)) * 1000 + 1500));
@@ -275,7 +300,7 @@
       if (!film) return;
       if (calm) { film.setAttribute('controls', ''); return; }
       film.addEventListener('ended', next);
-      film.addEventListener('error', function () { if (!idle()) after(hold); });
+      film.addEventListener('error', function () { if (!blocked()) after(hold); });
     });
 
     Array.prototype.forEach.call(dots, function (dot, i) {
@@ -283,8 +308,12 @@
     });
 
     var hold_ = function (on) { paused = on; run(); };
-    box.addEventListener('pointerenter', function () { hold_(true); });
-    box.addEventListener('pointerleave', function () { hold_(false); });
+    // touch has no reliable 'leave', so a tap would hold the card for good
+    var byMouse = function (on) {
+      return function (e) { if (!e.pointerType || e.pointerType === 'mouse') hold_(on); };
+    };
+    box.addEventListener('pointerenter', byMouse(true));
+    box.addEventListener('pointerleave', byMouse(false));
     box.addEventListener('focusin', function () { hold_(true); });
     box.addEventListener('focusout', function () { hold_(false); });
     document.addEventListener('visibilitychange', run);
@@ -313,7 +342,7 @@
     var run = function () {
       if (onScreen && !document.hidden) {
         var playing = film.play();
-        if (playing && playing.catch) playing.catch(function () {});
+        if (playing && playing.catch) playing.catch(function () { afterGesture(run); });
       } else {
         film.pause();
       }
