@@ -99,6 +99,14 @@
           <div class="slides" data-slides data-hold="6000"
                aria-roledescription="carousel" aria-label="AR try-on project">
             <figure class="slide is-on">
+              <video class="slide-vid" muted playsinline preload="metadata"
+                     width="1400" height="600" poster="/assets/video/try-on-film.webp"
+                     aria-label="Film: a shopper dances holding up her phone, which shows a green puffer jacket tried on over her own photo. Titles read &#8220;Virtual try on, powered by AI&#8221;.">
+                <source src="/assets/video/try-on-film.webm" type="video/webm">
+                <source src="/assets/video/try-on-film.mp4" type="video/mp4">
+              </video>
+            </figure>
+            <figure class="slide">
               <picture>
                 <source srcset="/assets/img/case-virtual-try-on-hero.webp" type="image/webp">
                 <img src="/assets/img/case-virtual-try-on-hero.jpg" width="2100" height="900"
@@ -114,12 +122,26 @@
                      loading="lazy" decoding="async">
               </picture>
             </figure>
+            <figure class="slide">
+              <video class="slide-vid" muted playsinline preload="none"
+                     width="1400" height="600" poster="/assets/video/try-on-studio.webp"
+                     aria-label="Film: a headset-wearing operator at a darkened desk working across dashboards on a curved monitor.">
+                <source src="/assets/video/try-on-studio.webm" type="video/webm">
+                <source src="/assets/video/try-on-studio.mp4" type="video/mp4">
+              </video>
+            </figure>
             <div class="slides-nav">
               <button type="button" class="slides-dot" data-slide-to="0" aria-current="true">
-                <span class="vh">Show slide 1: the campaign key visual</span>
+                <span class="vh">Show slide 1: the try-on film</span>
               </button>
               <button type="button" class="slides-dot" data-slide-to="1" aria-current="false">
-                <span class="vh">Show slide 2: the storefront it sits on</span>
+                <span class="vh">Show slide 2: the campaign key visual</span>
+              </button>
+              <button type="button" class="slides-dot" data-slide-to="2" aria-current="false">
+                <span class="vh">Show slide 3: the storefront it sits on</span>
+              </button>
+              <button type="button" class="slides-dot" data-slide-to="3" aria-current="false">
+                <span class="vh">Show slide 4: the team behind it</span>
               </button>
             </div>
           </div>

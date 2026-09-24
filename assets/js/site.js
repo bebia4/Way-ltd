@@ -213,10 +213,12 @@
   }
 
   /* ------------------------------------------ case figure slideshow */
-  /* Crossfades the slides in a [data-slides] figure. It only ever runs while
-     the card is on screen, the tab is visible, and nobody is hovering or
-     tabbing through it — and not at all if the visitor asked for less motion,
-     in which case the dots still work as a manual picker. */
+  /* Crossfades the slides in a [data-slides] figure. Picture slides are held
+     for data-hold; film slides run to their own end and then hand over. It
+     only ever plays while the card is on screen, the tab is visible, and
+     nobody is hovering or tabbing through it. With prefers-reduced-motion
+     nothing advances or plays on its own: the dots become a manual picker
+     and the films get their native controls. */
   Array.prototype.forEach.call(document.querySelectorAll('[data-slides]'), function (box) {
     var slides = box.querySelectorAll('.slide');
     if (slides.length < 2) return;
@@ -225,48 +227,78 @@
     var hold = parseInt(box.getAttribute('data-hold'), 10) || 6000;
     var at = 0, timer = null, paused = false, onScreen = true;
 
+    var filmIn = function (i) { return slides[i].querySelector('video'); };
+    var idle = function () { return calm || paused || !onScreen || document.hidden; };
+    var clear = function () { if (timer) { window.clearTimeout(timer); timer = null; } };
+
+    var next = function () { show(at + 1); };
+    var after = function (ms) { clear(); timer = window.setTimeout(next, ms); };
+
+    var run = function () {
+      clear();
+      var film = filmIn(at);
+      if (idle()) { if (film) film.pause(); return; }
+      if (!film) { after(hold); return; }
+
+      film.muted = true;                       // autoplay is only allowed muted
+      var playing = film.play();
+      if (playing && playing.catch) {
+        playing.catch(function () { after(hold); });   // refused: fall back to the clock
+      }
+      // backstop, so a clip that never fires 'ended' cannot strand the carousel
+      after(Math.max(hold, ((film.duration || 10) - (film.currentTime || 0)) * 1000 + 1500));
+    };
+
     var show = function (n) {
       at = (n + slides.length) % slides.length;
       Array.prototype.forEach.call(slides, function (slide, i) {
-        slide.classList.toggle('is-on', i === at);
-        slide.setAttribute('aria-hidden', String(i !== at));
+        var on = i === at;
+        var film = slide.querySelector('video');
+        slide.classList.toggle('is-on', on);
+        slide.setAttribute('aria-hidden', String(!on));
+        if (film && !on) {
+          film.pause();
+          try { film.currentTime = 0; } catch (e) {}
+        }
       });
       Array.prototype.forEach.call(dots, function (dot, i) {
         dot.setAttribute('aria-current', String(i === at));
       });
+      // start fetching the clip that is coming up, so the cut is not a stall
+      var soon = filmIn((at + 1) % slides.length);
+      if (soon && soon.preload !== 'auto') soon.preload = 'auto';
+      run();
     };
 
-    var stop = function () {
-      if (timer) { window.clearInterval(timer); timer = null; }
-    };
-
-    var play = function () {
-      stop();
-      if (calm || paused || !onScreen || document.hidden) return;
-      timer = window.setInterval(function () { show(at + 1); }, hold);
-    };
-
-    var hold_ = function (on) { paused = on; play(); };
-
-    Array.prototype.forEach.call(dots, function (dot, i) {
-      dot.addEventListener('click', function () { show(i); play(); });
+    Array.prototype.forEach.call(slides, function (slide) {
+      var film = slide.querySelector('video');
+      if (!film) return;
+      if (calm) { film.setAttribute('controls', ''); return; }
+      film.addEventListener('ended', next);
+      film.addEventListener('error', function () { if (!idle()) after(hold); });
     });
 
+    Array.prototype.forEach.call(dots, function (dot, i) {
+      dot.addEventListener('click', function () { show(i); });
+    });
+
+    var hold_ = function (on) { paused = on; run(); };
     box.addEventListener('pointerenter', function () { hold_(true); });
     box.addEventListener('pointerleave', function () { hold_(false); });
     box.addEventListener('focusin', function () { hold_(true); });
     box.addEventListener('focusout', function () { hold_(false); });
-    document.addEventListener('visibilitychange', play);
+    document.addEventListener('visibilitychange', run);
 
     if ('IntersectionObserver' in window) {
       new IntersectionObserver(function (entries) {
-        onScreen = entries[0].isIntersecting;
-        play();
-      }, { threshold: 0.25 }).observe(box);
+        // isIntersecting is true at a single visible pixel, which is not
+        // enough to be worth playing — go by how much of the card is showing.
+        onScreen = entries[0].intersectionRatio >= 0.25;
+        run();
+      }, { threshold: [0, 0.25, 0.6] }).observe(box);
     }
 
     show(0);
-    play();
   });
 
   /* ---------------------------------------------- marquee: duplicate track */
