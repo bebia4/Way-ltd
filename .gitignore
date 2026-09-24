@@ -1,0 +1,11 @@
+# OS / editor noise
+.DS_Store
+Thumbs.db
+*.swp
+.idea/
+.vscode/
+
+# dependencies & build output (none needed to serve this site)
+node_modules/
+dist/
+.cache/
